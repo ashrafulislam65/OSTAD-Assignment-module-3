@@ -64,13 +64,6 @@ jobs:
         
         run: |
           echo "=== Starting Deployment on Self-Hosted Runner ==="
-          npm install --production
-          
-          # PM2 দিয়ে ব্যাকগ্রাউন্ডে অ্যাপটি রান করানো (Process Management)
-          if pm2 describe ostad-app > /dev/null; then
-            echo "App is running, restarting..."
-            pm2 restart ostad-app
-          else
-            echo "First time deployment, starting app..."
-            pm2 start index.js --name "ostad-app" || pm2 start server.js --name "ostad-app"
-          fi
+          npm install
+          npm run build --if-present
+          echo "=== Deployment Completed Successfully! ==="
