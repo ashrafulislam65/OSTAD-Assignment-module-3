@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 2,
+  "agentName": "LAPTOP-F156K89V",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus8.actions.githubusercontent.com/eShH4NOnTwzmdb5nvZINm8rBGtUaZ2SC3VPi9bjLpQE3R7Er63/",
+  "gitHubUrl": "https://github.com/ashrafulislam65/OSTAD-Assignment-module-3",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}

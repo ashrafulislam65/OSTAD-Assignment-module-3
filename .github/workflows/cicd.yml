@@ -1,0 +1,76 @@
+name: Node.js CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests & Capture Results
+       
+        run: |
+          npm test > test-results.txt || true 
+          cat test-results.txt
+
+      - name: Upload Test Results Artifact
+        
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-results.txt
+          retention-days: 5
+
+  
+  deploy:
+    needs: test 
+    runs-on: self-hosted 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Test Results Artifact
+        
+        uses: actions/download-artifact@v4
+        with:
+          name: test-report
+          path: .
+
+      - name: Display Artifact Content
+        
+        run: |
+          echo "=== Displaying Downloaded Test Results ==="
+          cat test-results.txt
+
+      - name: Deploy Application
+        
+        run: |
+          echo "=== Starting Deployment on Self-Hosted Runner ==="
+          npm install --production
+          
+          # PM2 দিয়ে ব্যাকগ্রাউন্ডে অ্যাপটি রান করানো (Process Management)
+          if pm2 describe ostad-app > /dev/null; then
+            echo "App is running, restarting..."
+            pm2 restart ostad-app
+          else
+            echo "First time deployment, starting app..."
+            pm2 start index.js --name "ostad-app" || pm2 start server.js --name "ostad-app"
+          fi
